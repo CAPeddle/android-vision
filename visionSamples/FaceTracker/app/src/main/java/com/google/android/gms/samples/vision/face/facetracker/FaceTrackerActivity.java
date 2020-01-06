@@ -61,6 +61,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
+    private Button btnStartService;
+
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
@@ -85,12 +87,14 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             requestCameraPermission();
         }
 
-        Button btnStartService = findViewById(R.id.preview);
+        btnStartService = findViewById(R.id.changeCameraButton);
 
         btnStartService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG, "onClick: Clicked");
                 startMyService();
+
             }
         });
 
@@ -165,17 +169,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
 
     public void startMyService() {
+        android.util.Log.i(TAG, "startMyService: " );
 
         Intent serviceIntent = new Intent(this, ForeGroundService.class);
         serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
         serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
 
-//        ComponentName runningComponent;
-//        runningComponent = this.startService(serviceIntent);
-
         ContextCompat.startForegroundService(this, serviceIntent);
-
-        android.util.Log.i(TAG, "startMyService: " );
     }
 
     public static void stopMyService(Context context) {

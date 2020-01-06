@@ -24,6 +24,9 @@ public class ForeGroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Log.i(TAG, "Start Foreground Intent Camera Paused: "  );
+
+
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Log.i(TAG, "Start Foreground Intent Camera Paused: "  );
 
@@ -44,7 +47,7 @@ public class ForeGroundService extends Service {
             nextIntent.setAction(Constants.ACTION.PAUSE_ACTION);
             PendingIntent pnextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
-            Notification notification = new NotificationCompat.Builder(this)
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Face Pay")
                     .setTicker("Face Pay")
                     .setContentText("Face Pay")
