@@ -24,9 +24,6 @@ public class ForeGroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.i(TAG, "Start Foreground Intent Camera Paused: "  );
-
-
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Log.i(TAG, "Start Foreground Intent Camera Paused: "  );
 
