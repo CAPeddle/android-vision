@@ -94,7 +94,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "onClick: Clicked");
                 startMyService();
-
             }
         });
 
@@ -166,7 +165,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 .setRequestedFps(30.0f)
                 .build();
     }
-
 
     public void startMyService() {
         android.util.Log.i(TAG, "startMyService: " );

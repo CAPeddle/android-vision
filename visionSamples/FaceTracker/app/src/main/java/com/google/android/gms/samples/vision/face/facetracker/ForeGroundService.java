@@ -6,11 +6,23 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.util.SparseArray;
+import android.widget.Toast;
+
+import com.google.android.gms.samples.vision.face.facetracker.patch.SafeFaceDetector;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
+
+import java.io.InputStream;
 
 public class ForeGroundService extends Service {
 
@@ -60,7 +72,7 @@ public class ForeGroundService extends Service {
 
         }
         else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            Log.i(TAG, "Clicked Play ");
+            Log.i(TAG, "Clicked Play " + DetectFaces(null));
         } else if (intent.getAction().equals(Constants.ACTION.PAUSE_ACTION)) {
             Log.i(TAG, "Clicked Pause ");
         } else if (intent.getAction().equals(
@@ -69,6 +81,42 @@ public class ForeGroundService extends Service {
         }
 
         return START_NOT_STICKY;
+    }
+
+    public int DetectFaces (Bitmap bitmap) {
+
+        if (bitmap == null) {
+            InputStream stream = getResources().openRawResource(R.raw.faces);
+            bitmap = BitmapFactory.decodeStream(stream);
+        }
+
+        FaceDetector detector = new FaceDetector.Builder(getApplicationContext())
+                .setTrackingEnabled(false)
+                .build();
+
+        Detector<Face> safeDetector = new SafeFaceDetector(detector);
+
+        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+        SparseArray<Face> faces = safeDetector.detect(frame);
+
+        int facesFound = 0;
+        if (!safeDetector.isOperational()) {
+            Log.w(TAG, "Face detector dependencies are not yet available.");
+
+            // Check for low storage.  If there is low storage, the native library will not be
+            // downloaded, so detection will not become operational.
+            IntentFilter lowstorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
+            boolean hasLowStorage = registerReceiver(null, lowstorageFilter) != null;
+
+            if (hasLowStorage) {
+                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
+                Log.w(TAG, getString(R.string.low_storage_error));
+            }
+        } else {
+            facesFound = faces.size();
+        }
+
+        return facesFound;
     }
 
     @Override
